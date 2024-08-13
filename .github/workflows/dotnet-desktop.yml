@@ -84,21 +84,11 @@ jobs:
     - name: Get Git Hash
       run: echo "sha_short=$(git rev-parse --short HEAD)" >> $env:GITHUB_OUTPUT
 
-    # Build app (Release)
+    # Build app
     - name: Build GoAwayEdge (Release)
-      run: msbuild $env:Solution_Name /t:Restore /t:Build;Publish /p:Configuration=Release /p:InformationalVersion=${sha_short} /p:OutputPath=..\publish\
-
-    # Post-Build (Release)
-    - name: Post-Build (Release)
-      run: ren publish\publish\GoAwayEdge.exe GoAwayEdge_release.exe
-
-     # Build app (Debug)
-    - name: Build GoAwayEdge (Debug)
-      run: msbuild $env:Solution_Name /t:Restore /t:Build;Publish /p:Configuration=Debug /p:InformationalVersion=${sha_short} /p:OutputPath=..\publish\
-
-    # Post-Build (Debug)
-    - name: Post-Build (Debug)
-      run: ren publish\publish\GoAwayEdge.exe GoAwayEdge_debug.exe
+      run: msbuild $env:Solution_Name /t:Restore /t:Build;Publish /p:Configuration=$env:Configuration /p:InformationalVersion=${sha_short} /p:OutputPath=..\publish\
+      env:
+        Configuration: ${{ matrix.configuration }}
  
     # Upload builds
     - name: Upload build artifacts
